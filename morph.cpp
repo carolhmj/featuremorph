@@ -115,7 +115,13 @@ void anim::Morph::morph(QImage &origin, QImage &destination, std::vector<Feature
             }
 
             pfinaldest = p + displacementSum / weightSum;
-            destination.setPixel(p.x(),p.y(),origin.pixel(int(pfinaldest.x()),int(pfinaldest.y())));
+            int xDest = int(pfinaldest.x()), yDest = int(pfinaldest.y());
+            if (xDest > 0 && xDest < this->xImgSize && yDest > 0 && yDest < this->yImgSize){
+                destination.setPixel(p.x(),p.y(),origin.pixel(xDest,yDest));
+            } else {
+                QColor black = QColor(255,255,255);
+                destination.setPixel(p.x(),p.y(),black.rgb());
+            }
         }
     }
 
