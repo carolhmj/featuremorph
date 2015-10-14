@@ -16,12 +16,12 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->origLabel->setPixmap(QPixmap::fromImage(m.img1));
     //ui->destLabel->setPixmap(QPixmap::fromImage(m.img2));
     //Terminar de adicionar features!
-    m.addToFeatureList(QVector2D(189,720-530),QVector2D(162,720-455),QVector2D(122,720-546),QVector2D(96,720-438));
-    m.addToFeatureList(QVector2D(434,720-534),QVector2D(468,720-401),QVector2D(455,720-549),QVector2D(477,720-419));
-    m.addToFeatureList(QVector2D(258,720-479),QVector2D(389,720-498),QVector2D(213,720-518),QVector2D(369,720-509));
-    m.addToFeatureList(QVector2D(234,720-353),QVector2D(299,720-356),QVector2D(149,720-312),QVector2D(239,720-315));
-    m.addToFeatureList(QVector2D(371,720-365),QVector2D(437,720-372),QVector2D(342,720-306),QVector2D(419,720-305));
-    m.addToFeatureList(QVector2D(258,720-579),QVector2D(348,720-588),QVector2D(221,720-648),QVector2D(342,720-651));
+    m.addToFeatureList(QVector2D(189,530),QVector2D(162,455),QVector2D(122,546),QVector2D(96,438));
+    m.addToFeatureList(QVector2D(434,534),QVector2D(468,401),QVector2D(455,549),QVector2D(477,419));
+    m.addToFeatureList(QVector2D(258,479),QVector2D(389,498),QVector2D(213,518),QVector2D(369,509));
+    m.addToFeatureList(QVector2D(234,353),QVector2D(299,356),QVector2D(149,312),QVector2D(239,315));
+    m.addToFeatureList(QVector2D(371,365),QVector2D(437,372),QVector2D(342,306),QVector2D(419,305));
+    m.addToFeatureList(QVector2D(258,579),QVector2D(348,588),QVector2D(221,648),QVector2D(342,651));
     float morphInd = 0.0;
     for (int i = 0; i < 120; i++){
         QImage morphed = m.morphStep(morphInd);
