@@ -15,6 +15,7 @@ namespace anim {
     private:
     public:
         std::vector<Feature> featureList;
+        std::vector<QString> featureNames;
         QImage img1, img2;
         float xImgSize, yImgSize;
         float a,b,p;
@@ -22,8 +23,14 @@ namespace anim {
         Morph();
         Morph(const char* imgName1, const char* imgName2, float xImgSize, float yImgSize, float a, float b, float p);
         Morph(QString imgName1, QString imgName2, float xImgSize, float yImgSize, float a, float b, float p);
+        Morph(float xImgSize, float yImgSize, float a, float b, float p);
+        Morph(float xImgSize, float yImgSize);
         ~Morph();
         void addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2);
+        void addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2, QString name);
+        void setOriginImg(QString name);
+        void setDestImg(QString name);
+        void changeImgSize(float xImgSize, float yImgSize);
         QVector2D perpendicularHelper(const QVector2D &v);
         Feature interpolateOrigin(Feature f, float i);
         Feature interpolateDest(Feature f, float i);

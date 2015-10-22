@@ -2,6 +2,7 @@
 #define FEATURE_H
 
 #include <QVector2D>
+#include <string>
 namespace anim{
     class Feature {
     public:

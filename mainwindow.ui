@@ -6,34 +6,198 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>1010</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Morphing</string>
+   <string>Feature-based Morphing</string>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QLabel" name="origLabel">
-      <property name="text">
-       <string>TextLabel</string>
+     <widget class="QWidget" name="imageDisplay" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="origLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="imgLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="destLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="imgLabel">
-      <property name="text">
-       <string>TextLabel</string>
+     <widget class="QWidget" name="options" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="destLabel">
-      <property name="text">
-       <string>TextLabel</string>
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>0</height>
+       </size>
       </property>
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>9</y>
+         <width>181</width>
+         <height>391</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QPushButton" name="openSource">
+            <property name="text">
+             <string>Open Source Image</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="openDest">
+            <property name="text">
+             <string>Open Destination Image</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Features</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QComboBox" name="featureSelect"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addFeature">
+             <property name="text">
+              <string>Add new feature</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="removeFeature">
+             <property name="text">
+              <string>Remove selected feature</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Morph Amount</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="morphSingleAmount"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="morphSingle">
+            <property name="text">
+             <string>Morph single image</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Animation seconds</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="morphAnimationSec"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="morphAnimation">
+            <property name="text">
+             <string>Animate morph</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -43,7 +207,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>1010</width>
      <height>27</height>
     </rect>
    </property>

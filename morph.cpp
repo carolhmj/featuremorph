@@ -33,6 +33,21 @@ anim::Morph::Morph(QString imgName1, QString imgName2, float xImgSize, float yIm
     this->p = p;
 }
 
+anim::Morph::Morph(float xImgSize, float yImgSize, float a, float b, float p)
+{
+    this->xImgSize = xImgSize;
+    this->yImgSize = yImgSize;
+    this->a = a;
+    this->b = b;
+    this->p = p;
+}
+
+anim::Morph::Morph(float xImgSize, float yImgSize)
+{
+    this->xImgSize = xImgSize;
+    this->yImgSize = yImgSize;
+}
+
 anim::Morph::~Morph()
 {
 
@@ -41,6 +56,35 @@ anim::Morph::~Morph()
 void anim::Morph::addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2)
 {
     this->featureList.push_back(Feature(p1,p2,q1,q2));
+    QString tmp;
+    tmp.append("Feature ");
+    tmp.append(QString().setNum(this->featureList.size()));
+    this->featureNames.push_back(tmp);
+}
+
+void anim::Morph::addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2, QString name)
+{
+    this->featureList.push_back(Feature(p1,p2,q1,q2));
+    this->featureNames.push_back(name);
+}
+
+void anim::Morph::setOriginImg(QString name)
+{
+    this->img1 = QImage(name).scaled(this->xImgSize, this->yImgSize);
+}
+
+void anim::Morph::setDestImg(QString name)
+{
+    this->img2 = QImage(name).scaled(this->xImgSize, this->yImgSize);
+}
+
+void anim::Morph::changeImgSize(float xImgSize, float yImgSize)
+{
+    this->xImgSize = xImgSize;
+    this->yImgSize = yImgSize;
+
+    this->img1.scaled(xImgSize, yImgSize);
+    this->img2.scaled(xImgSize,yImgSize);
 }
 
 //Retorna o vetor obtido pela rotação de v em -90 graus
