@@ -7,7 +7,8 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QMouseEvent>
-
+#include <QPainter>
+#include <vector>
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -23,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->morph = anim::Morph(imgWidth, imgHeight, 0.0005, 0.6, 0.5);
     QPixmap tmp = QPixmap(imgWidth, imgHeight);
     tmp.fill(QColor(0,0,0));
+    QPainter testPainter(&tmp);
+    testPainter.setPen(QColor(255,0,0));
+    testPainter.drawLine(QPointF(20,30),QPointF(30,40));
     ui->origLabel->setPixmap(tmp);
     ui->destLabel->setPixmap(tmp);
     ui->imgLabel->setPixmap(tmp);
@@ -34,12 +38,14 @@ MainWindow::MainWindow(QWidget *parent) :
     //anim::Morph m = anim::Morph("../img/caraline.jpg", "../img/bradline.jpg", 570, 720, 0.0005, 0.6, 0.5);
     //ui->origLabel->setPixmap(QPixmap::fromImage(m.img1));
     //ui->destLabel->setPixmap(QPixmap::fromImage(m.img2));
-//    m.addToFeatureList(QVector2D(189,530),QVector2D(162,455),QVector2D(122,546),QVector2D(96,438));
-//    m.addToFeatureList(QVector2D(434,534),QVector2D(468,401),QVector2D(455,549),QVector2D(477,419));
-//    m.addToFeatureList(QVector2D(258,479),QVector2D(389,498),QVector2D(213,518),QVector2D(369,509));
-//    m.addToFeatureList(QVector2D(234,353),QVector2D(299,356),QVector2D(149,312),QVector2D(239,315));
-//    m.addToFeatureList(QVector2D(371,365),QVector2D(437,372),QVector2D(342,306),QVector2D(419,305));
-//    m.addToFeatureList(QVector2D(258,579),QVector2D(348,588),QVector2D(221,648),QVector2D(342,651));
+    morph.setOriginImg("../img/cara.jpg");
+    morph.setDestImg("../img/brad.jpg");
+    morph.addToFeatureList(QVector2D(189,530),QVector2D(162,455),QVector2D(122,546),QVector2D(96,438));
+    morph.addToFeatureList(QVector2D(434,534),QVector2D(468,401),QVector2D(455,549),QVector2D(477,419));
+    morph.addToFeatureList(QVector2D(258,479),QVector2D(389,498),QVector2D(213,518),QVector2D(369,509));
+    morph.addToFeatureList(QVector2D(234,353),QVector2D(299,356),QVector2D(149,312),QVector2D(239,315));
+    morph.addToFeatureList(QVector2D(371,365),QVector2D(437,372),QVector2D(342,306),QVector2D(419,305));
+    morph.addToFeatureList(QVector2D(258,579),QVector2D(348,588),QVector2D(221,648),QVector2D(342,651));
 //    float morphInd = 0.0;
 //    for (int i = 0; i < 120; i++){
 //        QImage morphed = m.morphStep(morphInd);
@@ -60,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    }
 
     //ui->imgLabel->setPixmap(QPixmap::fromImage(morphed));
-
+    drawFeatures();
 }
 
 MainWindow::~MainWindow()
@@ -72,28 +78,41 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     int xPos = event->pos().x();
     int yPos = event->pos().y();
+    int xPosWidg, yPosWidg;
     switch(this->currentStatus){
     case ADD_P1:
         if (ui->origLabel->underMouse()) {
-            points[0] = ;
+            xPosWidg = xPos - ui->origLabel->x();
+            yPosWidg = yPos - ui->origLabel->y();
+            qDebug() << "[" << xPosWidg << " " << yPosWidg << "]\n";
+            points[0] = QVector2D(xPosWidg,yPosWidg);
             this->currentStatus = ADD_P2;
         }
         break;
     case ADD_P2:
         if (ui->origLabel->underMouse()){
-            points[1] = ;
+            xPosWidg = xPos - ui->origLabel->x();
+            yPosWidg = yPos - ui->origLabel->y();
+            qDebug() << "[" << xPosWidg << " " << yPosWidg << "]\n";
+            points[1] = QVector2D(xPosWidg,yPosWidg);
             this->currentStatus = ADD_Q1;
         }
         break;
     case ADD_Q1:
         if (ui->destLabel->underMouse()){
-            points[2] = ;
+            xPosWidg = xPos - ui->destLabel->x();
+            yPosWidg = yPos - ui->destLabel->y();
+            qDebug() << "[" << xPosWidg << " " << yPosWidg << "]\n";
+            points[2] = QVector2D(xPosWidg,yPosWidg);
             this->currentStatus = ADD_Q2;
         }
         break;
     case ADD_Q2:
         if (ui->destLabel->underMouse()){
-            points[3] = ;
+            xPosWidg = xPos - ui->destLabel->x();
+            yPosWidg = yPos - ui->destLabel->y();
+            qDebug() << "[" << xPosWidg << " " << yPosWidg << "]\n";
+            points[3] = QVector2D(xPosWidg,yPosWidg);
             this->currentStatus = ADD_ALL;
         }
         break;
@@ -132,4 +151,20 @@ void MainWindow::openDestImg()
 void MainWindow::addNewFeature()
 {
 
+}
+
+void MainWindow::drawFeatures()
+{
+    QPixmap sourcePix = QPixmap::fromImage(morph.img1);
+    QPixmap destPix = QPixmap::fromImage(morph.img2);
+    QPainter sourcePaint(&sourcePix);
+    QPainter destPaint(&destPix);
+
+    for (auto f : morph.featureList){
+        sourcePaint.drawLine(f.p1.toPointF(),f.p2.toPointF());
+        destPaint.drawLine(f.q1.toPointF(),f.q2.toPointF());
+    }
+
+    ui->origLabel->setPixmap(sourcePix);
+    ui->destLabel->setPixmap(destPix);
 }

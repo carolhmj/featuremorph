@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "morph.h"
-enum featureLineAddStatus {NOT_ADD, ADD_P1, ADD_P2, ADD_Q1, ADD_Q2};
+enum featureLineAddStatus {ADD_P1, ADD_P2, ADD_Q1, ADD_Q2, ADD_ALL};
 
 namespace Ui {
 class MainWindow;
@@ -27,11 +27,13 @@ private:
 protected:
     //void resizeEvent(QResizeEvent *event);
     void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
+    //void mouseReleaseEvent(QMouseEvent *event);
+    //void paintEvent(QPaintEvent *event);
 public slots:
     void openSourceImg();
     void openDestImg();
     void addNewFeature();
+    void drawFeatures();
 };
 
 #endif // MAINWINDOW_H

@@ -10,15 +10,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = FeatureMorph
 TEMPLATE = app
-
+CONFIG += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     morph.cpp \
-    feature.cpp
+    feature.cpp \
+    imgpainter.cpp
 
 HEADERS  += mainwindow.h \
     morph.h \
-    feature.h
+    feature.h \
+    imgpainter.h
 
 FORMS    += mainwindow.ui
