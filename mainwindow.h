@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include "morph.h"
+
+#define FRAMERATE 24
+
 enum featureLineAddStatus {ADD_P1, ADD_P2, ADD_Q1, ADD_Q2, ADD_ALL};
 
 namespace Ui {
@@ -22,18 +25,21 @@ private:
     anim::Morph morph;
     int imgWidth;
     int imgHeight;
-    featureLineAddStatus currentStatus;
+    featureLineAddStatus currentStatus = ADD_P1;
     QVector2D points[4];
 protected:
     //void resizeEvent(QResizeEvent *event);
     void mousePressEvent(QMouseEvent *event);
     //void mouseReleaseEvent(QMouseEvent *event);
     //void paintEvent(QPaintEvent *event);
+    void delay(int millisecondsToWait);
 public slots:
     void openSourceImg();
     void openDestImg();
     void addNewFeature();
     void drawFeatures();
+    void morphSingle();
+    void morphAnimation();
 };
 
 #endif // MAINWINDOW_H

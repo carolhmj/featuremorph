@@ -8,7 +8,12 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QProgressDialog>
+#include <QTime>
+#include <QCoreApplication>
+#include <QMessageBox>
 #include <vector>
+#include <cstdlib>
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -35,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->openSource,SIGNAL(clicked(bool)),this,SLOT(openSourceImg()));
     connect(ui->openDest,SIGNAL(clicked(bool)),this,SLOT(openDestImg()));
     connect(ui->addFeature,SIGNAL(clicked(bool)),this,SLOT(addNewFeature()));
+    connect(ui->morphSingle,SIGNAL(clicked(bool)),this,SLOT(morphSingle()));
+    connect(ui->morphAnimation,SIGNAL(clicked(bool)),this,SLOT(morphAnimation()));
     //anim::Morph m = anim::Morph("../img/caraline.jpg", "../img/bradline.jpg", 570, 720, 0.0005, 0.6, 0.5);
     //ui->origLabel->setPixmap(QPixmap::fromImage(m.img1));
     //ui->destLabel->setPixmap(QPixmap::fromImage(m.img2));
@@ -121,6 +128,15 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void MainWindow::delay(int millisecondsToWait)
+{
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+    }
+}
+
 //void MainWindow::resizeEvent(QResizeEvent *)
 //{
 //    this->imgWidth = ui->origLabel->width();
@@ -159,12 +175,49 @@ void MainWindow::drawFeatures()
     QPixmap destPix = QPixmap::fromImage(morph.img2);
     QPainter sourcePaint(&sourcePix);
     QPainter destPaint(&destPix);
-
     for (auto f : morph.featureList){
+        //qDebug() << "p1: [" << f.p1.x() << " | " << f.p1.y() << "] p2: [" << f.p2.x() << " | " << f.p2.y() << "] q1: [" << f.q1.x() << " | " << f.q1.y() << "] q2: [" << f.q2.x() << " | " << f.q2.y() << "]\n";
         sourcePaint.drawLine(f.p1.toPointF(),f.p2.toPointF());
         destPaint.drawLine(f.q1.toPointF(),f.q2.toPointF());
     }
-
+    //sourcePaint.drawLine(QPointF(0,0),QPointF(135,240));
     ui->origLabel->setPixmap(sourcePix);
     ui->destLabel->setPixmap(destPix);
+}
+
+void MainWindow::morphSingle()
+{
+    float morphAmount = ui->morphSingleAmount->value();
+    QMessageBox progress;
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setText("Generating image...");
+    progress.exec();
+    QImage morphedImage = morph.morphStep(morphAmount);
+    ui->imgLabel->setPixmap(QPixmap::fromImage(morphedImage));
+    progress.close();
+}
+
+void MainWindow::morphAnimation()
+{
+    float animSeconds = ui->morphAnimationSec->value();
+    std::vector<QImage> video;
+    float morphInd = 0.0;
+    int numFrames = animSeconds * FRAMERATE;
+    QProgressDialog progress("Generating image frames...", "Cancel", 1, numFrames, this);
+    progress.setWindowModality(Qt::WindowModal);
+    for (int i = 0; i < numFrames; i++){
+        QImage morphed = morph.morphStep(morphInd);
+        progress.setValue(i+1);
+        morphInd += 1.0/numFrames;
+        video.push_back(morphed);
+        if (progress.wasCanceled()) {
+            break;
+        }
+    }
+    progress.setValue(numFrames);
+    qDebug() << "video size" << video.size() << "\n";
+    for (auto i : video){
+        ui->imgLabel->setPixmap(QPixmap::fromImage(i));
+        delay(1000/FRAMERATE);
+    }
 }
