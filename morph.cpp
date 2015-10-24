@@ -56,16 +56,23 @@ anim::Morph::~Morph()
 void anim::Morph::addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2)
 {
     this->featureList.push_back(Feature(p1,p2,q1,q2));
-    QString tmp;
-    tmp.append("Feature ");
-    tmp.append(QString().setNum(this->featureList.size()));
-    this->featureNames.push_back(tmp);
+//    QString tmp;
+//    tmp.append("Feature ");
+//    tmp.append(QString().setNum(this->featureList.size()));
+//    this->featureNames.push_back(tmp);
 }
 
 void anim::Morph::addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2, QString name)
 {
     this->featureList.push_back(Feature(p1,p2,q1,q2));
     this->featureNames.push_back(name);
+}
+
+void anim::Morph::addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2, QString name, QColor color)
+{
+    this->featureList.push_back(Feature(p1,p2,q1,q2));
+    this->featureNames.push_back(name);
+    this->featureColors.push_back(color);
 }
 
 void anim::Morph::setOriginImg(QString name)

@@ -15,12 +15,10 @@ CONFIG += c++11
 SOURCES += main.cpp\
         mainwindow.cpp \
     morph.cpp \
-    feature.cpp \
-    imgpainter.cpp
+    feature.cpp
 
 HEADERS  += mainwindow.h \
     morph.h \
-    feature.h \
-    imgpainter.h
+    feature.h
 
 FORMS    += mainwindow.ui

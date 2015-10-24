@@ -25,6 +25,7 @@ private:
     anim::Morph morph;
     int imgWidth;
     int imgHeight;
+    int selectedFeatureIndex = -1;
     featureLineAddStatus currentStatus = ADD_P1;
     QVector2D points[4];
 protected:
@@ -33,6 +34,7 @@ protected:
     //void mouseReleaseEvent(QMouseEvent *event);
     //void paintEvent(QPaintEvent *event);
     void delay(int millisecondsToWait);
+    int rand(int low, int high);
 public slots:
     void openSourceImg();
     void openDestImg();
@@ -40,6 +42,8 @@ public slots:
     void drawFeatures();
     void morphSingle();
     void morphAnimation();
+    void setSelectedFeature(int index);
+    void deleteSelectedFeature();
 };
 
 #endif // MAINWINDOW_H

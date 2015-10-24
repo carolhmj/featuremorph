@@ -16,6 +16,7 @@ namespace anim {
     public:
         std::vector<Feature> featureList;
         std::vector<QString> featureNames;
+        std::vector<QColor> featureColors;
         QImage img1, img2;
         float xImgSize, yImgSize;
         float a,b,p;
@@ -28,6 +29,7 @@ namespace anim {
         ~Morph();
         void addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2);
         void addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2, QString name);
+        void addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2, QString name, QColor color);
         void setOriginImg(QString name);
         void setDestImg(QString name);
         void changeImgSize(float xImgSize, float yImgSize);

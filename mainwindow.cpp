@@ -12,6 +12,8 @@
 #include <QTime>
 #include <QCoreApplication>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QtGlobal>
 #include <vector>
 #include <cstdlib>
 using namespace std;
@@ -29,9 +31,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->morph = anim::Morph(imgWidth, imgHeight, 0.0005, 0.6, 0.5);
     QPixmap tmp = QPixmap(imgWidth, imgHeight);
     tmp.fill(QColor(0,0,0));
-    QPainter testPainter(&tmp);
-    testPainter.setPen(QColor(255,0,0));
-    testPainter.drawLine(QPointF(20,30),QPointF(30,40));
     ui->origLabel->setPixmap(tmp);
     ui->destLabel->setPixmap(tmp);
     ui->imgLabel->setPixmap(tmp);
@@ -42,17 +41,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->addFeature,SIGNAL(clicked(bool)),this,SLOT(addNewFeature()));
     connect(ui->morphSingle,SIGNAL(clicked(bool)),this,SLOT(morphSingle()));
     connect(ui->morphAnimation,SIGNAL(clicked(bool)),this,SLOT(morphAnimation()));
+    connect(ui->addFeature,SIGNAL(clicked(bool)),this,SLOT(addNewFeature()));
+    connect(ui->featureSelect,SIGNAL(currentIndexChanged(int)),this,SLOT(setSelectedFeature(int)));
     //anim::Morph m = anim::Morph("../img/caraline.jpg", "../img/bradline.jpg", 570, 720, 0.0005, 0.6, 0.5);
     //ui->origLabel->setPixmap(QPixmap::fromImage(m.img1));
     //ui->destLabel->setPixmap(QPixmap::fromImage(m.img2));
     morph.setOriginImg("../img/cara.jpg");
     morph.setDestImg("../img/brad.jpg");
-    morph.addToFeatureList(QVector2D(189,530),QVector2D(162,455),QVector2D(122,546),QVector2D(96,438));
-    morph.addToFeatureList(QVector2D(434,534),QVector2D(468,401),QVector2D(455,549),QVector2D(477,419));
-    morph.addToFeatureList(QVector2D(258,479),QVector2D(389,498),QVector2D(213,518),QVector2D(369,509));
-    morph.addToFeatureList(QVector2D(234,353),QVector2D(299,356),QVector2D(149,312),QVector2D(239,315));
-    morph.addToFeatureList(QVector2D(371,365),QVector2D(437,372),QVector2D(342,306),QVector2D(419,305));
-    morph.addToFeatureList(QVector2D(258,579),QVector2D(348,588),QVector2D(221,648),QVector2D(342,651));
+//    morph.addToFeatureList(QVector2D(189,530),QVector2D(162,455),QVector2D(122,546),QVector2D(96,438));
+//    morph.addToFeatureList(QVector2D(434,534),QVector2D(468,401),QVector2D(455,549),QVector2D(477,419));
+//    morph.addToFeatureList(QVector2D(258,479),QVector2D(389,498),QVector2D(213,518),QVector2D(369,509));
+//    morph.addToFeatureList(QVector2D(234,353),QVector2D(299,356),QVector2D(149,312),QVector2D(239,315));
+//    morph.addToFeatureList(QVector2D(371,365),QVector2D(437,372),QVector2D(342,306),QVector2D(419,305));
+//    morph.addToFeatureList(QVector2D(258,579),QVector2D(348,588),QVector2D(221,648),QVector2D(342,651));
 //    float morphInd = 0.0;
 //    for (int i = 0; i < 120; i++){
 //        QImage morphed = m.morphStep(morphInd);
@@ -73,6 +74,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //    }
 
     //ui->imgLabel->setPixmap(QPixmap::fromImage(morphed));
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
     drawFeatures();
 }
 
@@ -83,44 +86,35 @@ MainWindow::~MainWindow()
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    int xPos = event->pos().x();
-    int yPos = event->pos().y();
-    int xPosWidg, yPosWidg;
+    QPoint pos = event->pos();
+
     switch(this->currentStatus){
     case ADD_P1:
         if (ui->origLabel->underMouse()) {
-            xPosWidg = xPos - ui->origLabel->x();
-            yPosWidg = yPos - ui->origLabel->y();
-            qDebug() << "[" << xPosWidg << " " << yPosWidg << "]\n";
-            points[0] = QVector2D(xPosWidg,yPosWidg);
+            points[0] = QVector2D( ui->origLabel->mapFrom(this,pos) );
             this->currentStatus = ADD_P2;
+            drawFeatures();
         }
         break;
     case ADD_P2:
         if (ui->origLabel->underMouse()){
-            xPosWidg = xPos - ui->origLabel->x();
-            yPosWidg = yPos - ui->origLabel->y();
-            qDebug() << "[" << xPosWidg << " " << yPosWidg << "]\n";
-            points[1] = QVector2D(xPosWidg,yPosWidg);
+            points[1] = QVector2D( ui->origLabel->mapFrom(this,pos) );
             this->currentStatus = ADD_Q1;
+            drawFeatures();
         }
         break;
     case ADD_Q1:
         if (ui->destLabel->underMouse()){
-            xPosWidg = xPos - ui->destLabel->x();
-            yPosWidg = yPos - ui->destLabel->y();
-            qDebug() << "[" << xPosWidg << " " << yPosWidg << "]\n";
-            points[2] = QVector2D(xPosWidg,yPosWidg);
+            points[2] = QVector2D( ui->destLabel->mapFrom(this,pos) );
             this->currentStatus = ADD_Q2;
+            drawFeatures();
         }
         break;
     case ADD_Q2:
         if (ui->destLabel->underMouse()){
-            xPosWidg = xPos - ui->destLabel->x();
-            yPosWidg = yPos - ui->destLabel->y();
-            qDebug() << "[" << xPosWidg << " " << yPosWidg << "]\n";
-            points[3] = QVector2D(xPosWidg,yPosWidg);
+            points[3] = QVector2D( ui->destLabel->mapFrom(this,pos) );
             this->currentStatus = ADD_ALL;
+            drawFeatures();
         }
         break;
     case ADD_ALL:
@@ -137,6 +131,11 @@ void MainWindow::delay(int millisecondsToWait)
     }
 }
 
+int MainWindow::rand(int low, int high)
+{
+    return qrand() % ((high + 1) - low) + low;
+}
+
 //void MainWindow::resizeEvent(QResizeEvent *)
 //{
 //    this->imgWidth = ui->origLabel->width();
@@ -147,7 +146,7 @@ void MainWindow::delay(int millisecondsToWait)
 
 void MainWindow::openSourceImg()
 {
-    QString name = QFileDialog::getOpenFileName(this, tr("Open Source Image"), "$$PWD/../img", tr("Image files (*.png *.jpg *.bmp)"));
+    QString name = QFileDialog::getOpenFileName(this, tr("Open Source Image"), "../img", tr("Image files (*.png *.jpg *.bmp)"));
     qDebug() << name << "\n";
     if (!name.isEmpty()) {
         morph.setOriginImg(name);
@@ -166,21 +165,89 @@ void MainWindow::openDestImg()
 
 void MainWindow::addNewFeature()
 {
+    if (this->currentStatus == ADD_ALL){
+        QString defaultName;
+        defaultName.append("Feature ");
+        defaultName.append(QString().setNum(this->morph.featureList.size()+1));
 
+        bool ok;
+        QString name = QInputDialog::getText(this,tr("Feature"),tr("Input the Feature Name:"),QLineEdit::Normal,defaultName, &ok);
+        if (ok) {
+            if (name.isEmpty()) {
+                name = defaultName;
+            }
+            QColor color(rand(0,255),rand(0,255),rand(0,255));
+            morph.addToFeatureList(points[0],points[1],points[2],points[3],name,color);
+            this->currentStatus = ADD_P1;
+            ui->featureSelect->addItem(name);
+        }
+    }
+    drawFeatures();
 }
 
 void MainWindow::drawFeatures()
 {
+    //Setup dos elementos de desenho
     QPixmap sourcePix = QPixmap::fromImage(morph.img1);
     QPixmap destPix = QPixmap::fromImage(morph.img2);
     QPainter sourcePaint(&sourcePix);
-    QPainter destPaint(&destPix);
+    QPainter destPaint(&destPix);   
+    QPen sourcePen;
+    QPen destPen;
+    sourcePen.setWidth(3);
+    destPen.setWidth(3);
+    sourcePaint.setPen(sourcePen);
+    sourcePaint.setRenderHint(QPainter::Antialiasing);
+
+    destPaint.setPen(destPen);
+    destPaint.setRenderHint(QPainter::Antialiasing);
+
+    //Loop de desenho dos feature prontos
+    int i = 0;
     for (auto f : morph.featureList){
         //qDebug() << "p1: [" << f.p1.x() << " | " << f.p1.y() << "] p2: [" << f.p2.x() << " | " << f.p2.y() << "] q1: [" << f.q1.x() << " | " << f.q1.y() << "] q2: [" << f.q2.x() << " | " << f.q2.y() << "]\n";
+        sourcePen.setColor(morph.featureColors.at(i));
+        destPen.setColor(morph.featureColors.at(i));
+        if (i == this->selectedFeatureIndex) {
+            sourcePen.setStyle(Qt::DotLine);
+            destPen.setStyle(Qt::DotLine);
+        } else {
+            sourcePen.setStyle(Qt::SolidLine);
+            destPen.setStyle(Qt::SolidLine);
+        }
+        sourcePaint.setPen(sourcePen);
+        destPaint.setPen(destPen);
         sourcePaint.drawLine(f.p1.toPointF(),f.p2.toPointF());
         destPaint.drawLine(f.q1.toPointF(),f.q2.toPointF());
+        i++;
     }
-    //sourcePaint.drawLine(QPointF(0,0),QPointF(135,240));
+
+    //Loop de desenho dos features em construção
+    sourcePen.setColor(Qt::black);
+    sourcePen.setStyle(Qt::SolidLine);
+    destPen.setColor(Qt::black);
+    destPen.setStyle(Qt::SolidLine);
+    sourcePaint.setPen(sourcePen);
+    destPaint.setPen(destPen);
+    switch(this->currentStatus){
+    case ADD_P1:
+        break;
+    case ADD_P2:
+        sourcePaint.drawPoint(points[0].toPointF());
+        break;
+    case ADD_Q1:
+        sourcePaint.drawLine(points[0].toPointF(),points[1].toPointF());
+        break;
+    case ADD_Q2:
+        sourcePaint.drawLine(points[0].toPointF(),points[1].toPointF());
+        destPaint.drawPoint(points[2].toPointF());
+        break;
+    case ADD_ALL:
+        sourcePaint.drawLine(points[0].toPointF(),points[1].toPointF());
+        destPaint.drawLine(points[2].toPointF(),points[3].toPointF());
+        break;
+    }
+
     ui->origLabel->setPixmap(sourcePix);
     ui->destLabel->setPixmap(destPix);
 }
@@ -194,7 +261,6 @@ void MainWindow::morphSingle()
     progress.exec();
     QImage morphedImage = morph.morphStep(morphAmount);
     ui->imgLabel->setPixmap(QPixmap::fromImage(morphedImage));
-    progress.close();
 }
 
 void MainWindow::morphAnimation()
@@ -215,9 +281,30 @@ void MainWindow::morphAnimation()
         }
     }
     progress.setValue(numFrames);
-    qDebug() << "video size" << video.size() << "\n";
+    QMessageBox completionDialog;
+    completionDialog.setWindowModality(Qt::WindowModal);
+    completionDialog.setText("Generating done!");
+    completionDialog.exec();
+   //qDebug() << "video size" << video.size() << "\n";
     for (auto i : video){
         ui->imgLabel->setPixmap(QPixmap::fromImage(i));
         delay(1000/FRAMERATE);
     }
+}
+
+void MainWindow::setSelectedFeature(int index)
+{
+    qDebug() << "selected feature " << index << "\n";
+    this->selectedFeatureIndex = index;
+    drawFeatures();
+}
+
+void MainWindow::deleteSelectedFeature()
+{
+    if (this->selectedFeatureIndex > 0){
+        morph.featureList.erase(morph.featureList.begin()+selectedFeatureIndex);
+        morph.featureNames.erase(morph.featureNames.begin()+selectedFeatureIndex);
+        morph.featureColors.erase(morph.featureColors.begin()+selectedFeatureIndex);
+    }
+    this->selectedFeatureIndex = -1;
 }
