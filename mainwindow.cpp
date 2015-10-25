@@ -43,40 +43,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->morphAnimation,SIGNAL(clicked(bool)),this,SLOT(morphAnimation()));
     connect(ui->addFeature,SIGNAL(clicked(bool)),this,SLOT(addNewFeature()));
     connect(ui->featureSelect,SIGNAL(currentIndexChanged(int)),this,SLOT(setSelectedFeature(int)));
-    //anim::Morph m = anim::Morph("../img/caraline.jpg", "../img/bradline.jpg", 570, 720, 0.0005, 0.6, 0.5);
-    //ui->origLabel->setPixmap(QPixmap::fromImage(m.img1));
-    //ui->destLabel->setPixmap(QPixmap::fromImage(m.img2));
-    morph.setOriginImg("../img/cara.jpg");
-    morph.setDestImg("../img/brad.jpg");
-//    morph.addToFeatureList(QVector2D(189,530),QVector2D(162,455),QVector2D(122,546),QVector2D(96,438));
-//    morph.addToFeatureList(QVector2D(434,534),QVector2D(468,401),QVector2D(455,549),QVector2D(477,419));
-//    morph.addToFeatureList(QVector2D(258,479),QVector2D(389,498),QVector2D(213,518),QVector2D(369,509));
-//    morph.addToFeatureList(QVector2D(234,353),QVector2D(299,356),QVector2D(149,312),QVector2D(239,315));
-//    morph.addToFeatureList(QVector2D(371,365),QVector2D(437,372),QVector2D(342,306),QVector2D(419,305));
-//    morph.addToFeatureList(QVector2D(258,579),QVector2D(348,588),QVector2D(221,648),QVector2D(342,651));
-//    float morphInd = 0.0;
-//    for (int i = 0; i < 120; i++){
-//        QImage morphed = m.morphStep(morphInd);
-//        morphInd += 1.0/120.0;
-//        cout << "morphInd > " << morphInd << "\n";
-//        flush(cout);
-//        QString tmp = QString("image");
-//        QString tmp2;
-//        tmp2.setNum(i);
-//        if (i < 10)
-//            tmp.append("00").append(tmp2);
-//        else if (i < 100)
-//            tmp.append("0").append(tmp2);
-//        else
-//            tmp.append(tmp2);
-//        tmp.append(".png");
-//        morphed.save(tmp);
-//    }
+    connect(ui->removeFeature,SIGNAL(clicked(bool)),this,SLOT(deleteSelectedFeature()));
+    connect(ui->saveSingle,SIGNAL(clicked(bool)),this,SLOT(setSaveSingle(bool)));
+    connect(ui->saveAnim,SIGNAL(clicked(bool)),this,SLOT(setSaveAnim(bool)));
 
-    //ui->imgLabel->setPixmap(QPixmap::fromImage(morphed));
+    //Seed para a geração de números aleatórios
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
-    drawFeatures();
+
 }
 
 MainWindow::~MainWindow()
@@ -136,14 +110,6 @@ int MainWindow::rand(int low, int high)
     return qrand() % ((high + 1) - low) + low;
 }
 
-//void MainWindow::resizeEvent(QResizeEvent *)
-//{
-//    this->imgWidth = ui->origLabel->width();
-//    this->imgHeight = ui->origLabel->height();
-
-//    morph.changeImgSize(this->imgWidth,this->imgHeight);
-//}
-
 void MainWindow::openSourceImg()
 {
     QString name = QFileDialog::getOpenFileName(this, tr("Open Source Image"), "../img", tr("Image files (*.png *.jpg *.bmp)"));
@@ -156,7 +122,7 @@ void MainWindow::openSourceImg()
 
 void MainWindow::openDestImg()
 {
-    QString name = QFileDialog::getOpenFileName(this, tr("Open Source Image"), "$$PWD/img", tr("Image files (*.png *.jpg *.bmp)"));
+    QString name = QFileDialog::getOpenFileName(this, tr("Open Source Image"), "../img", tr("Image files (*.png *.jpg *.bmp)"));
     if (!name.isEmpty()) {
         morph.setDestImg(name);
     }
@@ -205,7 +171,7 @@ void MainWindow::drawFeatures()
     //Loop de desenho dos feature prontos
     int i = 0;
     for (auto f : morph.featureList){
-        //qDebug() << "p1: [" << f.p1.x() << " | " << f.p1.y() << "] p2: [" << f.p2.x() << " | " << f.p2.y() << "] q1: [" << f.q1.x() << " | " << f.q1.y() << "] q2: [" << f.q2.x() << " | " << f.q2.y() << "]\n";
+        //qDebug() << "p1: [" << f.p1.x() << " | " << f.p1.y() << "] p2: [" << f.p2.x() << " | " << f.p2.y() << "] q1: [" << f.q1.x() << " | " << f.q1.y() << "] q2: [" << f.q2.x() << " | " << f.q2.y() << "]\n";        
         sourcePen.setColor(morph.featureColors.at(i));
         destPen.setColor(morph.featureColors.at(i));
         if (i == this->selectedFeatureIndex) {
@@ -255,17 +221,31 @@ void MainWindow::drawFeatures()
 void MainWindow::morphSingle()
 {
     float morphAmount = ui->morphSingleAmount->value();
+    QString name;
+    if (saveSingle){
+        name = QFileDialog::getSaveFileName(this,tr("Save Image"),"../img/morph.png",tr("Image files (*.png *.jpg *.bmp)"));
+    }
     QMessageBox progress;
     progress.setWindowModality(Qt::WindowModal);
     progress.setText("Generating image...");
     progress.exec();
     QImage morphedImage = morph.morphStep(morphAmount);
     ui->imgLabel->setPixmap(QPixmap::fromImage(morphedImage));
+    if (saveSingle && !name.isEmpty()){
+        morphedImage.save(name);
+    }
 }
 
 void MainWindow::morphAnimation()
 {
     float animSeconds = ui->morphAnimationSec->value();
+    QString dirName;
+    QString fileName;
+    if (saveAnim){
+        dirName = QFileDialog::getExistingDirectory(this,tr("Save Video in Directory"),"../");
+        fileName = dirName.append("/morph");
+        qDebug() << fileName << "\n";
+    }
     std::vector<QImage> video;
     float morphInd = 0.0;
     int numFrames = animSeconds * FRAMERATE;
@@ -276,6 +256,12 @@ void MainWindow::morphAnimation()
         progress.setValue(i+1);
         morphInd += 1.0/numFrames;
         video.push_back(morphed);
+        if (saveAnim){
+            QString tmp = fileName;
+            QString tmp2;
+            tmp2.setNum(i);
+            morphed.save(tmp.append(tmp2).append(".png"));
+        }
         if (progress.wasCanceled()) {
             break;
         }
@@ -294,7 +280,7 @@ void MainWindow::morphAnimation()
 
 void MainWindow::setSelectedFeature(int index)
 {
-    qDebug() << "selected feature " << index << "\n";
+    //qDebug() << "selected feature " << index << "\n";
     this->selectedFeatureIndex = index;
     drawFeatures();
 }
@@ -305,6 +291,18 @@ void MainWindow::deleteSelectedFeature()
         morph.featureList.erase(morph.featureList.begin()+selectedFeatureIndex);
         morph.featureNames.erase(morph.featureNames.begin()+selectedFeatureIndex);
         morph.featureColors.erase(morph.featureColors.begin()+selectedFeatureIndex);
+        ui->featureSelect->removeItem(selectedFeatureIndex);
     }
     this->selectedFeatureIndex = -1;
+    drawFeatures();
+}
+
+void MainWindow::setSaveSingle(bool opt)
+{
+    this->saveSingle = opt;
+}
+
+void MainWindow::setSaveAnim(bool opt)
+{
+    this->saveAnim = opt;
 }

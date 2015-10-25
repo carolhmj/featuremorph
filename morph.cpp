@@ -56,10 +56,6 @@ anim::Morph::~Morph()
 void anim::Morph::addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2)
 {
     this->featureList.push_back(Feature(p1,p2,q1,q2));
-//    QString tmp;
-//    tmp.append("Feature ");
-//    tmp.append(QString().setNum(this->featureList.size()));
-//    this->featureNames.push_back(tmp);
 }
 
 void anim::Morph::addToFeatureList(QVector2D p1, QVector2D p2, QVector2D q1, QVector2D q2, QString name)
@@ -144,14 +140,8 @@ void anim::Morph::morph(QImage &origin, QImage &destination, std::vector<Feature
                 /*Dado o pixel (i,j), encontrar as coordenadas (u,v) dele
                  *Mapeamento para u,v é do site http://www.hammerhead.com/thad/morph.html
                  */
-//                QVector2D pq1 = p - q1;
-//                QVector2D p2p1 = p2 - p1;
-//                cout << "pq1: " << pq1.x() << "|" << pq1.y() << " p2p1: " << p2p1.x() << "|" << p2p1.y() << "\n";
-//                flush(cout);
 
                 u = QVector2D::dotProduct(p - q1, q2 - q1) / (q2 - q1).lengthSquared();
-                //cout << "len q2 - q1: " << (q2-q1).length() << " len perpHelp q2 - q1: " << perpendicularHelper(q2 -q1).length() << "\n";
-                flush(cout);
                 v = QVector2D::dotProduct(p - q1, perpendicularHelper(q2 - q1)) / (q2 - q1).length();
                 pdest = p1 + u*(p2 - p1) + (v*perpendicularHelper(p2 - p1)) / (p2 - p1).length();
 

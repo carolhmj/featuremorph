@@ -28,11 +28,10 @@ private:
     int selectedFeatureIndex = -1;
     featureLineAddStatus currentStatus = ADD_P1;
     QVector2D points[4];
+    bool saveSingle = false;
+    bool saveAnim = false;
 protected:
-    //void resizeEvent(QResizeEvent *event);
     void mousePressEvent(QMouseEvent *event);
-    //void mouseReleaseEvent(QMouseEvent *event);
-    //void paintEvent(QPaintEvent *event);
     void delay(int millisecondsToWait);
     int rand(int low, int high);
 public slots:
@@ -44,6 +43,8 @@ public slots:
     void morphAnimation();
     void setSelectedFeature(int index);
     void deleteSelectedFeature();
+    void setSaveSingle(bool opt);
+    void setSaveAnim(bool opt);
 };
 
 #endif // MAINWINDOW_H
